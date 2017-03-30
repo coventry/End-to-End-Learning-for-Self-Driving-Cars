@@ -18,7 +18,7 @@ from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_a
 
 # Fix error with Keras and TensorFlow
 import tensorflow as tf
-tf.python.control_flow_ops = tf
+# tf.python.control_flow_ops = tf
 
 
 sio = socketio.Server()

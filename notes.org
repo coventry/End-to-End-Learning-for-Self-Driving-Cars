@@ -1,0 +1,81 @@
+* Building and running the driver
+
+  sudo docker build -t sdc .
+  sudo docker run -it -p 4567:4567 --rm sdc
+
+* Getting Udacity self-driving car simulator running
+
+This needs to be done on a local machine.  See "VNC" for issues with
+running it on AWS.  If you build the driver on AWS, forward port 4567
+to the local machine.  It is probably cheap enough to just run
+locally, though.
+
+1. Download [[https://d17h27t6h515a5.cloudfront.net/topher/2017/February/58983558_beta-simulator-linux/beta-simulator-linux.zip][beta-simulator-linux.zip]], and unzip it.
+2. cd beta_simulator_linux; chmod a+x beta_simulator.x86_64
+3. ./beta_simulator.x86_64
+
+You probably need to download & install Unity before you do this.
+
+** Installing Unity
+
+This is necessary for the car simulator.
+
+[[https://forum.unity3d.com/threads/unity-on-linux-release-notes-and-known-issues.350256/][Linux page]] for Unity points to [[http://beta.unity3d.com/download/e348e673a4c6/public_download.html][this download page]], which points to
+[[http://beta.unity3d.com/download/e348e673a4c6/unity-editor_amd64-5.6.0xf1Linux.deb][this deb file]]...
+
+  wget http://beta.unity3d.com/download/e348e673a4c6/unity-editor_amd64-5.6.0xf1Linux.deb
+  sudo cp unity-editor_amd64-5.6.0xf1Linux.deb /var/cache/apt/archives/
+  sudo apt-get install -f 
+  sudo apt-get install unity-editor
+
+This is 2.4G, so it takes a while...
+
+** VNC
+
+Below are notes about attempting to set the system up on an AWS
+machine... This [[https://github.com/udacity/self-driving-car-sim/issues/22][doesn't work]].  Might want to try with xvfb instead,
+but the output is not great.
+
+*** Why it might be failing
+
+Here I am trying to run the simulator in a VNC session, on an Athena
+WS where the simulator runs fine in the standard X session.
+
+  alex_c@W20-575-44:/tmp/tmp/beta_simulator_linux$ ./beta_simulator.x86_64 
+  Set current directory to /tmp/tmp/beta_simulator_linux
+  Found path: /tmp/tmp/beta_simulator_linux/beta_simulator.x86_64
+  Mono path[0] = '/tmp/tmp/beta_simulator_linux/beta_simulator_Data/Managed'
+  Mono path[1] = '/tmp/tmp/beta_simulator_linux/beta_simulator_Data/Mono'
+  Mono config path = '/tmp/tmp/beta_simulator_linux/beta_simulator_Data/Mono/etc'
+  X Error of failed request:  BadRequest (invalid request code or no such operation)
+    Major opcode of failed request:  149 (RANDR)
+    Minor opcode of failed request:  8 (RRGetScreenResources)
+    Serial number of failed request:  9
+    Current serial number in output stream:  9
+  
+So perhaps the issue is that vnc4server doesn't implement the xrandr
+protocol.  I believe there is another vnc server or similar which
+does.
+
+*** Host machine
+
+Give it at least 20G of space.  Takes about 17G.
+
+  sudo apt-get install vnc4server sawfish-lisp-source gnome-terminal emacs-nox unzip 
+
+*** Set up for VNC
+
+ vncserver -geometry 1600x1200
+
+  ssh -L 5901:localhost:5901 driving
+
+  Run remmina
+
+  Start sawfish manually
+
+*** Install simulator
+
+Install [[https://github.com/udacity/self-driving-car-sim][Udacity self-driving car simulator]].  Download [[https://d17h27t6h515a5.cloudfront.net/topher/2017/February/58983558_beta-simulator-linux/beta-simulator-linux.zip][zip file]].
+
+  wget https://d17h27t6h515a5.cloudfront.net/topher/2017/February/58983558_beta-simulator-linux/beta-simulator-linux.zip
+  unzip beta-simulator-linux.zip
